@@ -1,0 +1,301 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		140A919F150FD58C00BCF0B0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 140A919E150FD58C00BCF0B0 /* UIKit.framework */; };
+		140A91A1150FD58C00BCF0B0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 140A91A0150FD58C00BCF0B0 /* Foundation.framework */; };
+		140A91A3150FD58C00BCF0B0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 140A91A2150FD58C00BCF0B0 /* CoreGraphics.framework */; };
+		140A91A5150FD58C00BCF0B0 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 140A91A4150FD58C00BCF0B0 /* CoreData.framework */; };
+		140A91AB150FD58C00BCF0B0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 140A91A9150FD58C00BCF0B0 /* InfoPlist.strings */; };
+		140A91AD150FD58C00BCF0B0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 140A91AC150FD58C00BCF0B0 /* main.m */; };
+		140A91B1150FD58C00BCF0B0 /* WSUTwitterClientAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 140A91B0150FD58C00BCF0B0 /* WSUTwitterClientAppDelegate.m */; };
+		140A91B4150FD58C00BCF0B0 /* WSUTwitterClient.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 140A91B2150FD58C00BCF0B0 /* WSUTwitterClient.xcdatamodeld */; };
+		140A91BD150FD60900BCF0B0 /* TweetsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 140A91BB150FD60900BCF0B0 /* TweetsTableViewController.m */; };
+		140A91BE150FD60900BCF0B0 /* TweetsTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 140A91BC150FD60900BCF0B0 /* TweetsTableViewController.xib */; };
+		140A91C1150FD6F200BCF0B0 /* Tweet.m in Sources */ = {isa = PBXBuildFile; fileRef = 140A91C0150FD6F200BCF0B0 /* Tweet.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		140A919A150FD58C00BCF0B0 /* WSUTwitterClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WSUTwitterClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		140A919E150FD58C00BCF0B0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		140A91A0150FD58C00BCF0B0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		140A91A2150FD58C00BCF0B0 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		140A91A4150FD58C00BCF0B0 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		140A91A8150FD58C00BCF0B0 /* WSUTwitterClient-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WSUTwitterClient-Info.plist"; sourceTree = "<group>"; };
+		140A91AA150FD58C00BCF0B0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		140A91AC150FD58C00BCF0B0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		140A91AE150FD58C00BCF0B0 /* WSUTwitterClient-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WSUTwitterClient-Prefix.pch"; sourceTree = "<group>"; };
+		140A91AF150FD58C00BCF0B0 /* WSUTwitterClientAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WSUTwitterClientAppDelegate.h; sourceTree = "<group>"; };
+		140A91B0150FD58C00BCF0B0 /* WSUTwitterClientAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WSUTwitterClientAppDelegate.m; sourceTree = "<group>"; };
+		140A91B3150FD58C00BCF0B0 /* WSUTwitterClient.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = WSUTwitterClient.xcdatamodel; sourceTree = "<group>"; };
+		140A91BA150FD60900BCF0B0 /* TweetsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TweetsTableViewController.h; sourceTree = "<group>"; };
+		140A91BB150FD60900BCF0B0 /* TweetsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TweetsTableViewController.m; sourceTree = "<group>"; };
+		140A91BC150FD60900BCF0B0 /* TweetsTableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TweetsTableViewController.xib; sourceTree = "<group>"; };
+		140A91BF150FD6F200BCF0B0 /* Tweet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tweet.h; sourceTree = "<group>"; };
+		140A91C0150FD6F200BCF0B0 /* Tweet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tweet.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		140A9197150FD58C00BCF0B0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				140A919F150FD58C00BCF0B0 /* UIKit.framework in Frameworks */,
+				140A91A1150FD58C00BCF0B0 /* Foundation.framework in Frameworks */,
+				140A91A3150FD58C00BCF0B0 /* CoreGraphics.framework in Frameworks */,
+				140A91A5150FD58C00BCF0B0 /* CoreData.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		140A918F150FD58C00BCF0B0 = {
+			isa = PBXGroup;
+			children = (
+				140A91A6150FD58C00BCF0B0 /* WSUTwitterClient */,
+				140A919D150FD58C00BCF0B0 /* Frameworks */,
+				140A919B150FD58C00BCF0B0 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		140A919B150FD58C00BCF0B0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				140A919A150FD58C00BCF0B0 /* WSUTwitterClient.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		140A919D150FD58C00BCF0B0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				140A919E150FD58C00BCF0B0 /* UIKit.framework */,
+				140A91A0150FD58C00BCF0B0 /* Foundation.framework */,
+				140A91A2150FD58C00BCF0B0 /* CoreGraphics.framework */,
+				140A91A4150FD58C00BCF0B0 /* CoreData.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		140A91A6150FD58C00BCF0B0 /* WSUTwitterClient */ = {
+			isa = PBXGroup;
+			children = (
+				140A91AF150FD58C00BCF0B0 /* WSUTwitterClientAppDelegate.h */,
+				140A91B0150FD58C00BCF0B0 /* WSUTwitterClientAppDelegate.m */,
+				140A91BA150FD60900BCF0B0 /* TweetsTableViewController.h */,
+				140A91BB150FD60900BCF0B0 /* TweetsTableViewController.m */,
+				140A91BC150FD60900BCF0B0 /* TweetsTableViewController.xib */,
+				140A91B2150FD58C00BCF0B0 /* WSUTwitterClient.xcdatamodeld */,
+				140A91BF150FD6F200BCF0B0 /* Tweet.h */,
+				140A91C0150FD6F200BCF0B0 /* Tweet.m */,
+				140A91A7150FD58C00BCF0B0 /* Supporting Files */,
+			);
+			path = WSUTwitterClient;
+			sourceTree = "<group>";
+		};
+		140A91A7150FD58C00BCF0B0 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				140A91A8150FD58C00BCF0B0 /* WSUTwitterClient-Info.plist */,
+				140A91A9150FD58C00BCF0B0 /* InfoPlist.strings */,
+				140A91AC150FD58C00BCF0B0 /* main.m */,
+				140A91AE150FD58C00BCF0B0 /* WSUTwitterClient-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		140A9199150FD58C00BCF0B0 /* WSUTwitterClient */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 140A91B7150FD58C00BCF0B0 /* Build configuration list for PBXNativeTarget "WSUTwitterClient" */;
+			buildPhases = (
+				140A9196150FD58C00BCF0B0 /* Sources */,
+				140A9197150FD58C00BCF0B0 /* Frameworks */,
+				140A9198150FD58C00BCF0B0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WSUTwitterClient;
+			productName = WSUTwitterClient;
+			productReference = 140A919A150FD58C00BCF0B0 /* WSUTwitterClient.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		140A9191150FD58C00BCF0B0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+				ORGANIZATIONNAME = skylarhiebert.com;
+			};
+			buildConfigurationList = 140A9194150FD58C00BCF0B0 /* Build configuration list for PBXProject "WSUTwitterClient" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 140A918F150FD58C00BCF0B0;
+			productRefGroup = 140A919B150FD58C00BCF0B0 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				140A9199150FD58C00BCF0B0 /* WSUTwitterClient */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		140A9198150FD58C00BCF0B0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				140A91AB150FD58C00BCF0B0 /* InfoPlist.strings in Resources */,
+				140A91BE150FD60900BCF0B0 /* TweetsTableViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		140A9196150FD58C00BCF0B0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				140A91AD150FD58C00BCF0B0 /* main.m in Sources */,
+				140A91B1150FD58C00BCF0B0 /* WSUTwitterClientAppDelegate.m in Sources */,
+				140A91B4150FD58C00BCF0B0 /* WSUTwitterClient.xcdatamodeld in Sources */,
+				140A91BD150FD60900BCF0B0 /* TweetsTableViewController.m in Sources */,
+				140A91C1150FD6F200BCF0B0 /* Tweet.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		140A91A9150FD58C00BCF0B0 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				140A91AA150FD58C00BCF0B0 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		140A91B5150FD58C00BCF0B0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		140A91B6150FD58C00BCF0B0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		140A91B8150FD58C00BCF0B0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "WSUTwitterClient/WSUTwitterClient-Prefix.pch";
+				INFOPLIST_FILE = "WSUTwitterClient/WSUTwitterClient-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		140A91B9150FD58C00BCF0B0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "WSUTwitterClient/WSUTwitterClient-Prefix.pch";
+				INFOPLIST_FILE = "WSUTwitterClient/WSUTwitterClient-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		140A9194150FD58C00BCF0B0 /* Build configuration list for PBXProject "WSUTwitterClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				140A91B5150FD58C00BCF0B0 /* Debug */,
+				140A91B6150FD58C00BCF0B0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		140A91B7150FD58C00BCF0B0 /* Build configuration list for PBXNativeTarget "WSUTwitterClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				140A91B8150FD58C00BCF0B0 /* Debug */,
+				140A91B9150FD58C00BCF0B0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		140A91B2150FD58C00BCF0B0 /* WSUTwitterClient.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				140A91B3150FD58C00BCF0B0 /* WSUTwitterClient.xcdatamodel */,
+			);
+			currentVersion = 140A91B3150FD58C00BCF0B0 /* WSUTwitterClient.xcdatamodel */;
+			path = WSUTwitterClient.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 140A9191150FD58C00BCF0B0 /* Project object */;
+}
