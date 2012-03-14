@@ -15,6 +15,7 @@
 @synthesize managedObjectContext = __managedObjectContext;
 @synthesize managedObjectModel = __managedObjectModel;
 @synthesize persistentStoreCoordinator = __persistentStoreCoordinator;
+@synthesize tweets = _tweets;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -23,7 +24,6 @@
     self.window.backgroundColor = [UIColor whiteColor];
     
     TweetsTableViewController *viewController = [[TweetsTableViewController alloc] initWithNibName:nil bundle:nil];
-    viewController.managedObjectContext = self.managedObjectContext;
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:viewController];
     self.window.rootViewController = navController;
     
@@ -69,6 +69,7 @@
 
 - (void)saveContext
 {
+    NSLog(@"saveContext");
     NSError *error = nil;
     NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
     if (managedObjectContext != nil)

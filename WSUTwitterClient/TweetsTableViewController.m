@@ -8,20 +8,20 @@
 
 #import "TweetsTableViewController.h"
 #import "WSUTwitterClientAppDelegate.h"
+#import "TweetEditorViewController.h"
 #import "Tweet.h"
 
 @implementation TweetsTableViewController {
     NSOperationQueue *operationQueue;
 }
 
-@synthesize managedObjectContext = _managedObjectContext;
-@synthesize tweets = _tweets;
+@synthesize appDelegate = _appDelegate;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
     if (self) {
-        // Custom initialization
+        self.appDelegate = [[UIApplication sharedApplication] delegate];
     }
     return self;
 }
@@ -55,18 +55,18 @@
     
     // NEED IMPLEMENTATION DETAILS 
     // Fetch the cached copy of tweets
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Tweet" inManagedObjectContext:self.managedObjectContext];
+  /*  NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Tweet" inManagedObjectContext:_appDelegate.managedObjectContext];
     [request setEntity:entity];
     
     NSError *error;
-    NSArray *results = [self.managedObjectContext executeFetchRequest:request error:&error];
+    NSArray *results = [_appDelegate.managedObjectContext executeFetchRequest:request error:&error];
     if (results == nil) {
         NSLog(@"fetch error: %@ (%@)", error, [error userInfo]);
         abort();
     }
     
-    self.tweets = [results mutableCopy];
+    _appDelegate.tweets = [results mutableCopy]; */
 }
 
 - (void)viewDidUnload
@@ -104,34 +104,59 @@
 
 #pragma mark - callbacks
 
+
 - (void) getTweets:(id)sender {
     NSLog(@"getTweets:");
-    operationQueue = [[NSOperationQueue alloc] init];
-    NSInvocationOperation *op = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(fetchTweets:) object:nil];
-    [operationQueue addOperation:op];
+    //operationQueue = [[NSOperationQueue alloc] init];
+    //NSInvocationOperation *op = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(fetchTweets:) object:nil];
+    //[operationQueue addOperation:op];
 }
-
+/*
 - (void) fetchTweets:(id)object {
     NSLog(@"fetchTweets:");
+    // Create Date format and initial refresh date
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyy-MM-dd HH:mm:ss"];
+    [dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"PST"]];
+    NSString *refreshDateString = @"1970-01-01 00:00:00"; // Unix Epoch
+    NSDate *refreshDate = [dateFormatter dateFromString:refreshDateString];
+    
+    // Iterate through existing/stored tweets and update refresh date
+    WSUTwitterClientAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    for (NSDictionary *dict in appDelegate.tweets) {
+        if ([refreshDateString compare:[dict objectForKey:@"tstamp"]] > 0) {
+            refreshDateString = [dict objectForKey:@"tstamp"];
+            refreshDate = [dateFormatter dateFromString:refreshDateString];
+        }
+    }
+    
+    // Create refresh URL
     NSURL *url = [NSURL URLWithString:@"http://ezekiel.vancouver.wsu.edu/~wayne/cgi-bin/get-tweets.cgi?date=2012-03-12%2015:30:00"];
     NSMutableArray *array = [[NSMutableArray alloc] initWithContentsOfURL:url];
-    //WSUTwitterClientAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    
     
     // Convert from array of dictionaries to array of Tweets
     for (NSDictionary *dict in array) {
-        Tweet *newTweet = [NSEntityDescription insertNewObjectForEntityForName:@"Tweet" inManagedObjectContext:self.managedObjectContext];
+        Tweet *newTweet = [NSEntityDescription insertNewObjectForEntityForName:@"Tweet" inManagedObjectContext:_appDelegate.managedObjectContext];
         [newTweet setTweetid:[dict objectForKey:@"tweetid"]];
         [newTweet setWsuid:[dict objectForKey:@"wsuid"]];
         [newTweet setHandle:[dict objectForKey:@"handle"]];
         [newTweet setIsdeleted:[dict objectForKey:@"isdeleted"]];
         [newTweet setTstamp:[dict objectForKey:@"tstamp"]];
         [newTweet setTweet:[dict objectForKey:@"tweet"]];
-        [self.managedObjectContext insertObject:newTweet];
+        
+        if ([[newTweet isdeleted] intValue] == 0) { // Add tweet to store
+            [_appDelegate.managedObjectContext insertObject:newTweet];
+            [_appDelegate.tweets addObject:newTweet];
+        }
+        [self.tableView reloadData];
+        //NSLog(@"newTweet:%@ sizeTweets:%i", newTweet, [self.tweets count]);
+        
     }
 }
 
 -(void)addTweetWithId:(NSNumber *)tweetid wsuId:(NSString *)wsuid Handle:(NSString *)handle isDeleted:(NSNumber *)isdeleted TStamp:(NSString *)tstamp Tweet:(NSString *)tweet {
-    Tweet *newTweet = [NSEntityDescription insertNewObjectForEntityForName:@"Tweet" inManagedObjectContext:self.managedObjectContext];
+    Tweet *newTweet = [NSEntityDescription insertNewObjectForEntityForName:@"Tweet" inManagedObjectContext:_appDelegate.managedObjectContext];
     [newTweet setTweetid:tweetid];
     [newTweet setWsuid:wsuid];
     [newTweet setHandle:handle];
@@ -140,19 +165,41 @@
     [newTweet setTweet:tweet];
 
     NSError *error;
-    if(![self.managedObjectContext save:&error]) {
+    if(![_appDelegate.managedObjectContext save:&error]) {
         NSLog(@"add error: %@ (%@)", error, [error userInfo]);
         abort();
     }
-    [self.tweets addObject:tweet];
+    
+    if ([[newTweet isdeleted] intValue] == 0) {
+        [_appDelegate.tweets addObject:newTweet];
+    }
+    
     [self.tableView reloadData];
+}
+*/
+
+-(void)addTweetWithHandle:(NSString*)handle WsuId:(NSString*)wsuid Tweet:(NSString*)tweet {
+    
 }
 
 - (void) newTweet:(id)sender {
     NSLog(@"newTweet:");
+    TweetEditorViewController *viewController = [[TweetEditorViewController alloc] initWithNibName:nil bundle:nil];
+    viewController.delegate = self;
+    [self.navigationController pushViewController:viewController animated:YES];
 }
 
 #pragma mark - Table view data source
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    WSUTwitterClientAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    NSDictionary *dict = [appDelegate.tweets objectAtIndex:indexPath.row];
+    NSString *tweet = [dict objectForKey:@"tweet"];
+    UIFont *font = [UIFont systemFontOfSize:17];
+    CGSize maxSize = CGSizeMake(230, 999.0);
+    CGSize size = [tweet sizeWithFont:font constrainedToSize:maxSize lineBreakMode:UILineBreakModeTailTruncation];
+    return size.height + 20;
+}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -163,7 +210,8 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return [_tweets count];
+    WSUTwitterClientAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    return [appDelegate.tweets count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -174,16 +222,15 @@
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
-    
-    Tweet *tweet = [self.tweets objectAtIndex:indexPath.row];
-    if (!tweet.isdeleted) {
-        cell.textLabel.text = [NSString stringWithFormat:@"%@(%@) - %@", tweet.handle, tweet.wsuid, tweet.tstamp];
-        cell.textLabel.font = [UIFont systemFontOfSize:15];
-        cell.textLabel.textColor = [UIColor blueColor];
-        cell.detailTextLabel.text = tweet.tweet;
-        cell.detailTextLabel.font = [UIFont systemFontOfSize:17];
-        cell.detailTextLabel.textColor = [UIColor blackColor];
-    }
+    WSUTwitterClientAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    Tweet *tweet = [appDelegate.tweets objectAtIndex:indexPath.row];
+    cell.textLabel.text = [NSString stringWithFormat:@"%@(%@) - %@", tweet.handle, tweet.wsuid, tweet.tstamp];
+    cell.textLabel.font = [UIFont systemFontOfSize:15];
+    cell.textLabel.textColor = [UIColor blueColor];
+    cell.detailTextLabel.text = tweet.tweet;
+    cell.detailTextLabel.numberOfLines = 0; // Multi-line label
+    cell.detailTextLabel.font = [UIFont systemFontOfSize:17];
+    cell.detailTextLabel.textColor = [UIColor blackColor];
     
     return cell;
 }
