@@ -6,6 +6,9 @@
 //  Copyright (c) 2012 skylarhiebert.com. All rights reserved.
 //
 
+#define MAXCHARS 140
+
+#import <QuartzCore/QuartzCore.h>
 #import "TweetEditorViewController.h"
 #import "WSUTwitterClientAppDelegate.h"
 
@@ -14,7 +17,7 @@
 @synthesize delegate;
 @synthesize handleTextField;
 @synthesize wsuidTextField;
-@synthesize tweetTextField;
+@synthesize tweetTextView;
 @synthesize charactersLeftTextField;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -43,8 +46,11 @@
     UIBarButtonItem *sendButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(send:)];
     self.navigationItem.rightBarButtonItem = sendButton;
     
-    // Notification for tweetTextField
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textFieldChanged:) name:UITextFieldTextDidChangeNotification object:self.tweetTextField];
+    // Initialize tweetTextView
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textViewChanged:) name:UITextViewTextDidChangeNotification object:self.tweetTextView];
+    self.tweetTextView.text = @"";
+    self.tweetTextView.layer.borderWidth = 1.0;
+    self.tweetTextView.layer.borderColor = [[UIColor blackColor] CGColor];
 }
 
 -(void) viewDidAppear:(BOOL)animated {
@@ -52,10 +58,10 @@
     [handleTextField becomeFirstResponder];
 }
 
--(void)done:(id)sender {
+-(void)send:(id)sender {
     NSString *handle = self.handleTextField.text;
     NSString *wsuId = self.wsuidTextField.text;
-    NSString *tweetText = self.tweetTextField.text;
+    NSString *tweetText = self.tweetTextView.text;
     if ([handle length] == 0 || [wsuId length] == 0 || [tweetText length] == 0) {
         NSLog(@"empty fields");
     } else {
@@ -64,18 +70,31 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
--(void)textFieldChanged:(id)sender {
-    int maxChars = 140;
-    int charsUsed = [self.tweetTextField.text length];
-    NSLog(@"textFieldChanged:%i / %i", charsUsed, maxChars);
-    charactersLeftTextField.text = [NSString stringWithFormat:@"%i/%i", charsUsed, maxChars];
+// Edit the label to display the correct number of characters used
+-(void)textViewChanged:(id)sender {
+    int charsUsed = [self.tweetTextView.text length];
+    charactersLeftTextField.text = [NSString stringWithFormat:@"%i / %i", charsUsed, MAXCHARS];
+}
+
+// Limit the number of characters to MAXCHARS
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
+    if(range.length > text.length){
+        return YES;
+    }else if([[textView text] length] + text.length > MAXCHARS){
+        return NO;
+    }
+    
+    return YES;
 }
 
 - (void)viewDidUnload
 {
     [self setHandleTextField:nil];
     [self setWsuidTextField:nil];
-    [self setTweetTextField:nil];
+    [self setTweetTextView:nil];
+    [self setCharactersLeftTextField:nil];
+    [self setTweetTextView:nil];
+    [self setTweetTextView:nil];
     [self setCharactersLeftTextField:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.

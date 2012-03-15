@@ -8,6 +8,7 @@
 
 #import "WSUTwitterClientAppDelegate.h"
 #import "TweetsTableViewController.h"
+#import "Tweet.h"
 
 @implementation WSUTwitterClientAppDelegate
 
@@ -15,7 +16,12 @@
 @synthesize managedObjectContext = __managedObjectContext;
 @synthesize managedObjectModel = __managedObjectModel;
 @synthesize persistentStoreCoordinator = __persistentStoreCoordinator;
+@synthesize lastRefresh = _lastRefresh;
 @synthesize tweets = _tweets;
+@synthesize getTweetsData = _getTweetsData;
+@synthesize sendTweetsData = _sendTweetsData;
+@synthesize getTweetsConnection = _getTweetsConnection;
+@synthesize sendTweetsConnection = _sendTweetsConnection;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -84,6 +90,100 @@
             NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
             abort();
         } 
+    }
+}
+
+#pragma mark - Connection Callbacks
+
+- (void)refreshTweetsWithURL:(NSURL *)url {
+    NSLog(@"refreshTweetsWithURL:%@", url);
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60.0];
+    self.getTweetsConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+    
+    if (self.getTweetsConnection) {
+        self.getTweetsData = [[NSMutableData alloc] init]; 
+    } else {
+        NSLog(@"Error in refreshTweetsWithURL:%@", url);
+    }
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+    NSLog(@"connection:connection didReceiveResponse:");
+    if (connection == self.getTweetsConnection) {
+        [self.getTweetsData setLength:0];
+    } else if (connection == self.sendTweetsConnection) {
+        [self.sendTweetsData setLength:0];
+    }
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    NSLog(@"connection:connection didReceiveData:");
+    if (connection == self.getTweetsConnection) {
+        [self.getTweetsData appendData:data];
+    } else if (connection == self.sendTweetsConnection) {
+        [self.sendTweetsData appendData:data];
+    }
+}
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+    NSLog(@"connection:connection didFailWithError:");
+    if (connection == self.getTweetsConnection) {
+        self.getTweetsData = nil;
+        NSLog(@"getTweets Failed with error: %@", error);
+    } else if (connection == self.sendTweetsConnection) {
+        self.sendTweetsData = nil;
+        NSLog(@"sendTweets Failed with error: %@", error);
+    }
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+    NSLog(@"connectionDidFinishLoading:");
+    if (connection == self.getTweetsConnection) {
+        NSError *error;
+        NSArray *newTweets = [NSPropertyListSerialization propertyListWithData:self.getTweetsData options:NSPropertyListMutableContainersAndLeaves format:NULL error:&error];
+        
+        if ([newTweets count] > 0) {   
+            NSArray *sortedArray;
+            sortedArray = [newTweets sortedArrayUsingComparator:^(id a, id b) {
+                NSString *first = [(Tweet *)a tstamp];
+                NSString *second = [(Tweet *)b tstamp];
+                return [first compare:second];
+            }];
+            
+            // Convert from array of dictionaries to array of Tweets
+            // Add to persistant store
+            for (NSDictionary *dict in newTweets) {
+                Tweet *newTweet = [NSEntityDescription insertNewObjectForEntityForName:@"Tweet" inManagedObjectContext:self.managedObjectContext];
+                [newTweet setValue:[dict objectForKey:@"tweetid"] forKey:@"tweetid"];
+                [newTweet setValue:[dict objectForKey:@"wsuid"] forKey:@"wsuid"];
+                [newTweet setValue:[dict objectForKey:@"handle"] forKey:@"handle"];
+                [newTweet setValue:[dict objectForKey:@"isdeleted"] forKey:@"isdeleted"];
+                [newTweet setValue:[dict objectForKey:@"tstamp"] forKey:@"tstamp"];
+                [newTweet setValue:[dict objectForKey:@"tweet"] forKey:@"tweet"];
+                
+                /* XXX
+                [newTweet setTweetid:[dict objectForKey:@"tweetid"]];
+                [newTweet setWsuid:[dict objectForKey:@"wsuid"]];
+                [newTweet setHandle:[dict objectForKey:@"handle"]];
+                [newTweet setIsdeleted:[dict objectForKey:@"isdeleted"]];
+                [newTweet setTstamp:[dict objectForKey:@"tstamp"]];
+                [newTweet setTweet:[dict objectForKey:@"tweet"]];
+                */
+                
+                if ([[newTweet isdeleted] intValue] == 0) { // Add tweet to store
+                    [self.managedObjectContext insertObject:newTweet];
+                    [self.tweets addObject:newTweet];
+                }
+                
+                /* Post notification  of new tweets */
+                //NSLog(@"newTweet:%@ sizeTweets:%i", newTweet, [self.tweets count]);
+                
+            }
+            [self.managedObjectContext save:&error];
+        }
+        self.getTweetsData = nil;
+    } else if (connection == self.sendTweetsConnection) {
+        NSLog(@"sendTweetsConnection");
     }
 }
 

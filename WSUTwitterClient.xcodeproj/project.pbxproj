@@ -18,6 +18,7 @@
 		140A91BD150FD60900BCF0B0 /* TweetsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 140A91BB150FD60900BCF0B0 /* TweetsTableViewController.m */; };
 		140A91BE150FD60900BCF0B0 /* TweetsTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 140A91BC150FD60900BCF0B0 /* TweetsTableViewController.xib */; };
 		140A91C1150FD6F200BCF0B0 /* Tweet.m in Sources */ = {isa = PBXBuildFile; fileRef = 140A91C0150FD6F200BCF0B0 /* Tweet.m */; };
+		14BD31A2151262FF001E09C9 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14BD31A1151262FF001E09C9 /* QuartzCore.framework */; };
 		14E9070015113E4800EFF787 /* TweetEditorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14E906FE15113E4800EFF787 /* TweetEditorViewController.m */; };
 		14E9070115113E4800EFF787 /* TweetEditorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 14E906FF15113E4800EFF787 /* TweetEditorViewController.xib */; };
 /* End PBXBuildFile section */
@@ -40,6 +41,7 @@
 		140A91BC150FD60900BCF0B0 /* TweetsTableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TweetsTableViewController.xib; sourceTree = "<group>"; };
 		140A91BF150FD6F200BCF0B0 /* Tweet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tweet.h; sourceTree = "<group>"; };
 		140A91C0150FD6F200BCF0B0 /* Tweet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tweet.m; sourceTree = "<group>"; };
+		14BD31A1151262FF001E09C9 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		14E906FD15113E4800EFF787 /* TweetEditorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TweetEditorViewController.h; sourceTree = "<group>"; };
 		14E906FE15113E4800EFF787 /* TweetEditorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TweetEditorViewController.m; sourceTree = "<group>"; };
 		14E906FF15113E4800EFF787 /* TweetEditorViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TweetEditorViewController.xib; sourceTree = "<group>"; };
@@ -50,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14BD31A2151262FF001E09C9 /* QuartzCore.framework in Frameworks */,
 				140A919F150FD58C00BCF0B0 /* UIKit.framework in Frameworks */,
 				140A91A1150FD58C00BCF0B0 /* Foundation.framework in Frameworks */,
 				140A91A3150FD58C00BCF0B0 /* CoreGraphics.framework in Frameworks */,
@@ -63,6 +66,7 @@
 		140A918F150FD58C00BCF0B0 = {
 			isa = PBXGroup;
 			children = (
+				14BD31A1151262FF001E09C9 /* QuartzCore.framework */,
 				140A91A6150FD58C00BCF0B0 /* WSUTwitterClient */,
 				140A919D150FD58C00BCF0B0 /* Frameworks */,
 				140A919B150FD58C00BCF0B0 /* Products */,

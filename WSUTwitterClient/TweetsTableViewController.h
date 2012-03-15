@@ -12,8 +12,4 @@
 
 @interface TweetsTableViewController : UITableViewController <EditTweetDelegate>
 
-//@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
-//@property (strong, nonatomic) NSMutableArray *tweets;
-@property (weak, nonatomic) WSUTwitterClientAppDelegate *appDelegate ;
-
 @end

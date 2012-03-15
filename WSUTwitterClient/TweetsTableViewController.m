@@ -15,13 +15,11 @@
     NSOperationQueue *operationQueue;
 }
 
-@synthesize appDelegate = _appDelegate;
-
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
     if (self) {
-        self.appDelegate = [[UIApplication sharedApplication] delegate];
+        // Custom initialization
     }
     return self;
 }
@@ -55,18 +53,20 @@
     
     // NEED IMPLEMENTATION DETAILS 
     // Fetch the cached copy of tweets
-  /*  NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Tweet" inManagedObjectContext:_appDelegate.managedObjectContext];
+    WSUTwitterClientAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    NSManagedObjectContext *context = [appDelegate managedObjectContext];
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Tweet" inManagedObjectContext:context];
     [request setEntity:entity];
     
     NSError *error;
-    NSArray *results = [_appDelegate.managedObjectContext executeFetchRequest:request error:&error];
+    NSArray *results = [context executeFetchRequest:request error:&error];
     if (results == nil) {
         NSLog(@"fetch error: %@ (%@)", error, [error userInfo]);
         abort();
     }
     
-    _appDelegate.tweets = [results mutableCopy]; */
+    appDelegate.tweets = [results mutableCopy]; 
 }
 
 - (void)viewDidUnload
@@ -107,6 +107,13 @@
 
 - (void) getTweets:(id)sender {
     NSLog(@"getTweets:");
+    WSUTwitterClientAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    static NSString *getTweetCGI = @"http://ezekiel.vancouver.wsu.edu/~wayne/cgi-bin/get-tweets.cgi";
+    NSString *encodedDateString = [appDelegate.lastRefresh stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *query = [NSString stringWithFormat:@"%@?date=%@", getTweetCGI, encodedDateString];
+    NSURL *url = [NSURL URLWithString:query];
+    [appDelegate refreshTweetsWithURL:url];
+    
     //operationQueue = [[NSOperationQueue alloc] init];
     //NSInvocationOperation *op = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(fetchTweets:) object:nil];
     //[operationQueue addOperation:op];
@@ -126,6 +133,7 @@
     for (NSDictionary *dict in appDelegate.tweets) {
         if ([refreshDateString compare:[dict objectForKey:@"tstamp"]] > 0) {
             refreshDateString = [dict objectForKey:@"tstamp"];
+            self.lastRefresh = refreshDateString;
             refreshDate = [dateFormatter dateFromString:refreshDateString];
         }
     }
@@ -178,8 +186,54 @@
 }
 */
 
+static NSString *makeSafeForURLArgument(NSString *str) {
+    NSMutableString *temp = [str mutableCopy];
+    [temp replaceOccurrencesOfString:@"?"
+                          withString:@"%3F"
+                             options:0
+                               range:NSMakeRange(0, [temp length])];
+    [temp replaceOccurrencesOfString:@"="
+                          withString:@"%3D"
+                             options:0
+                               range:NSMakeRange(0, [temp length])];
+    [temp replaceOccurrencesOfString:@"&"
+                          withString:@"%26"
+                             options:0
+                               range:NSMakeRange(0, [temp length])];
+     return temp;
+}
+     
 -(void)addTweetWithHandle:(NSString*)handle WsuId:(NSString*)wsuid Tweet:(NSString*)tweet {
+    static NSString *tweetSendCGI = @"http://ezekiel.vancouver.wsu.edu/~wayne/cgi-bin/add-tweet.cgi";
+    NSString *encodedTweet = [tweet stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *urlEncodedTweet = makeSafeForURLArgument(encodedTweet);
+    NSString *encodedHandle = [handle stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *urlEncodedHandle = makeSafeForURLArgument(encodedHandle);
+    NSString *encdedWSUID = [wsuid stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *query = [NSString stringWithFormat:@"%@?handle=%@&wsuid=%@&tweet=%@", tweetSendCGI, urlEncodedHandle, encdedWSUID, urlEncodedTweet];
+    NSURL *url = [NSURL URLWithString:query];
+  
+    /* xxx
+    Tweet *newTweet = [NSEntityDescription insertNewObjectForEntityForName:@"Tweet" inManagedObjectContext:_appDelegate.managedObjectContext];
+    [newTweet setTweetid:tweetid];
+    [newTweet setWsuid:wsuid];
+    [newTweet setHandle:handle];
+    [newTweet setIsdeleted:isdeleted];
+    [newTweet setTstamp:tstamp];
+    [newTweet setTweet:tweet];
     
+    NSError *error;
+    if(![_appDelegate.managedObjectContext save:&error]) {
+        NSLog(@"add error: %@ (%@)", error, [error userInfo]);
+        abort();
+    }
+    
+    if ([[newTweet isdeleted] intValue] == 0) {
+        [_appDelegate.tweets addObject:newTweet];
+    }
+    
+    [self.tableView reloadData];
+     */
 }
 
 - (void) newTweet:(id)sender {
@@ -189,12 +243,18 @@
     [self.navigationController pushViewController:viewController animated:YES];
 }
 
+- (void)deleteTweet:(id)sender {
+    
+}
+
+
+
 #pragma mark - Table view data source
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     WSUTwitterClientAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    NSDictionary *dict = [appDelegate.tweets objectAtIndex:indexPath.row];
-    NSString *tweet = [dict objectForKey:@"tweet"];
+    Tweet *dict = [appDelegate.tweets objectAtIndex:indexPath.row];
+    NSString *tweet = dict.tweet;
     UIFont *font = [UIFont systemFontOfSize:17];
     CGSize maxSize = CGSizeMake(230, 999.0);
     CGSize size = [tweet sizeWithFont:font constrainedToSize:maxSize lineBreakMode:UILineBreakModeTailTruncation];
@@ -222,6 +282,7 @@
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
+    
     WSUTwitterClientAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     Tweet *tweet = [appDelegate.tweets objectAtIndex:indexPath.row];
     cell.textLabel.text = [NSString stringWithFormat:@"%@(%@) - %@", tweet.handle, tweet.wsuid, tweet.tstamp];

@@ -15,9 +15,15 @@
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+@property (strong, nonatomic) NSString *lastRefresh;
 @property (strong, nonatomic) NSMutableArray *tweets;
+@property (strong, nonatomic) NSMutableData *getTweetsData;
+@property (strong, nonatomic) NSMutableData *sendTweetsData;
+@property (strong, nonatomic) NSURLConnection *getTweetsConnection;
+@property (strong, nonatomic) NSURLConnection *sendTweetsConnection;
 
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
+- (void)refreshTweetsWithURL:(NSURL *)url;
 
 @end

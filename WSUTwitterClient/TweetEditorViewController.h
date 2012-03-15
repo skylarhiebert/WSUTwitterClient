@@ -20,7 +20,7 @@
 
 @property (weak, nonatomic) IBOutlet UITextField *handleTextField;
 @property (weak, nonatomic) IBOutlet UITextField *wsuidTextField;
-@property (weak, nonatomic) IBOutlet UITextField *tweetTextField;
+@property (weak, nonatomic) IBOutlet UITextView *tweetTextView;
 @property (weak, nonatomic) IBOutlet UILabel *charactersLeftTextField;
 
 - (IBAction)editingDidEnd:(id)sender;
