@@ -49,24 +49,10 @@
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(newTweet:)];
     self.navigationItem.rightBarButtonItem = addButton;
     UIBarButtonItem *getTweetsButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(getTweets:)];
-    self.navigationItem.leftBarButtonItem = getTweetsButton;
+    self.navigationItem.leftBarButtonItem = getTweetsButton;  
     
-    // NEED IMPLEMENTATION DETAILS 
-    // Fetch the cached copy of tweets
-    WSUTwitterClientAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    NSManagedObjectContext *context = [appDelegate managedObjectContext];
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Tweet" inManagedObjectContext:context];
-    [request setEntity:entity];
-    
-    NSError *error;
-    NSArray *results = [context executeFetchRequest:request error:&error];
-    if (results == nil) {
-        NSLog(@"fetch error: %@ (%@)", error, [error userInfo]);
-        abort();
-    }
-    
-    appDelegate.tweets = [results mutableCopy]; 
+    // Add notification center observer
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTweets) name:@"tweetsFinishedLoading" object:nil];
 }
 
 - (void)viewDidUnload
@@ -104,87 +90,15 @@
 
 #pragma mark - callbacks
 
+- (void) reloadTweets {
+    [self.tableView reloadData];
+}
 
 - (void) getTweets:(id)sender {
     NSLog(@"getTweets:");
     WSUTwitterClientAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    static NSString *getTweetCGI = @"http://ezekiel.vancouver.wsu.edu/~wayne/cgi-bin/get-tweets.cgi";
-    NSString *encodedDateString = [appDelegate.lastRefresh stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSString *query = [NSString stringWithFormat:@"%@?date=%@", getTweetCGI, encodedDateString];
-    NSURL *url = [NSURL URLWithString:query];
-    [appDelegate refreshTweetsWithURL:url];
-    
-    //operationQueue = [[NSOperationQueue alloc] init];
-    //NSInvocationOperation *op = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(fetchTweets:) object:nil];
-    //[operationQueue addOperation:op];
+    [appDelegate refreshTweets];
 }
-/*
-- (void) fetchTweets:(id)object {
-    NSLog(@"fetchTweets:");
-    // Create Date format and initial refresh date
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyy-MM-dd HH:mm:ss"];
-    [dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"PST"]];
-    NSString *refreshDateString = @"1970-01-01 00:00:00"; // Unix Epoch
-    NSDate *refreshDate = [dateFormatter dateFromString:refreshDateString];
-    
-    // Iterate through existing/stored tweets and update refresh date
-    WSUTwitterClientAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    for (NSDictionary *dict in appDelegate.tweets) {
-        if ([refreshDateString compare:[dict objectForKey:@"tstamp"]] > 0) {
-            refreshDateString = [dict objectForKey:@"tstamp"];
-            self.lastRefresh = refreshDateString;
-            refreshDate = [dateFormatter dateFromString:refreshDateString];
-        }
-    }
-    
-    // Create refresh URL
-    NSURL *url = [NSURL URLWithString:@"http://ezekiel.vancouver.wsu.edu/~wayne/cgi-bin/get-tweets.cgi?date=2012-03-12%2015:30:00"];
-    NSMutableArray *array = [[NSMutableArray alloc] initWithContentsOfURL:url];
-    
-    
-    // Convert from array of dictionaries to array of Tweets
-    for (NSDictionary *dict in array) {
-        Tweet *newTweet = [NSEntityDescription insertNewObjectForEntityForName:@"Tweet" inManagedObjectContext:_appDelegate.managedObjectContext];
-        [newTweet setTweetid:[dict objectForKey:@"tweetid"]];
-        [newTweet setWsuid:[dict objectForKey:@"wsuid"]];
-        [newTweet setHandle:[dict objectForKey:@"handle"]];
-        [newTweet setIsdeleted:[dict objectForKey:@"isdeleted"]];
-        [newTweet setTstamp:[dict objectForKey:@"tstamp"]];
-        [newTweet setTweet:[dict objectForKey:@"tweet"]];
-        
-        if ([[newTweet isdeleted] intValue] == 0) { // Add tweet to store
-            [_appDelegate.managedObjectContext insertObject:newTweet];
-            [_appDelegate.tweets addObject:newTweet];
-        }
-        [self.tableView reloadData];
-        //NSLog(@"newTweet:%@ sizeTweets:%i", newTweet, [self.tweets count]);
-        
-    }
-}
-
--(void)addTweetWithId:(NSNumber *)tweetid wsuId:(NSString *)wsuid Handle:(NSString *)handle isDeleted:(NSNumber *)isdeleted TStamp:(NSString *)tstamp Tweet:(NSString *)tweet {
-    Tweet *newTweet = [NSEntityDescription insertNewObjectForEntityForName:@"Tweet" inManagedObjectContext:_appDelegate.managedObjectContext];
-    [newTweet setTweetid:tweetid];
-    [newTweet setWsuid:wsuid];
-    [newTweet setHandle:handle];
-    [newTweet setIsdeleted:isdeleted];
-    [newTweet setTstamp:tstamp];
-    [newTweet setTweet:tweet];
-
-    NSError *error;
-    if(![_appDelegate.managedObjectContext save:&error]) {
-        NSLog(@"add error: %@ (%@)", error, [error userInfo]);
-        abort();
-    }
-    
-    if ([[newTweet isdeleted] intValue] == 0) {
-        [_appDelegate.tweets addObject:newTweet];
-    }
-    
-    [self.tableView reloadData];
-}
-*/
 
 static NSString *makeSafeForURLArgument(NSString *str) {
     NSMutableString *temp = [str mutableCopy];
@@ -204,36 +118,9 @@ static NSString *makeSafeForURLArgument(NSString *str) {
 }
      
 -(void)addTweetWithHandle:(NSString*)handle WsuId:(NSString*)wsuid Tweet:(NSString*)tweet {
-    static NSString *tweetSendCGI = @"http://ezekiel.vancouver.wsu.edu/~wayne/cgi-bin/add-tweet.cgi";
-    NSString *encodedTweet = [tweet stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSString *urlEncodedTweet = makeSafeForURLArgument(encodedTweet);
-    NSString *encodedHandle = [handle stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSString *urlEncodedHandle = makeSafeForURLArgument(encodedHandle);
-    NSString *encdedWSUID = [wsuid stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSString *query = [NSString stringWithFormat:@"%@?handle=%@&wsuid=%@&tweet=%@", tweetSendCGI, urlEncodedHandle, encdedWSUID, urlEncodedTweet];
-    NSURL *url = [NSURL URLWithString:query];
-  
-    /* xxx
-    Tweet *newTweet = [NSEntityDescription insertNewObjectForEntityForName:@"Tweet" inManagedObjectContext:_appDelegate.managedObjectContext];
-    [newTweet setTweetid:tweetid];
-    [newTweet setWsuid:wsuid];
-    [newTweet setHandle:handle];
-    [newTweet setIsdeleted:isdeleted];
-    [newTweet setTstamp:tstamp];
-    [newTweet setTweet:tweet];
-    
-    NSError *error;
-    if(![_appDelegate.managedObjectContext save:&error]) {
-        NSLog(@"add error: %@ (%@)", error, [error userInfo]);
-        abort();
-    }
-    
-    if ([[newTweet isdeleted] intValue] == 0) {
-        [_appDelegate.tweets addObject:newTweet];
-    }
-    
-    [self.tableView reloadData];
-     */
+    WSUTwitterClientAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    NSLog(@"Adding Tweet");
+    [appDelegate  sendTweetWithHandle:handle WsuId:wsuid Tweet:tweet];
 }
 
 - (void) newTweet:(id)sender {
@@ -246,7 +133,6 @@ static NSString *makeSafeForURLArgument(NSString *str) {
 - (void)deleteTweet:(id)sender {
     
 }
-
 
 
 #pragma mark - Table view data source

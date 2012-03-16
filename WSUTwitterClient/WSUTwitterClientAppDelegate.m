@@ -16,7 +16,8 @@
 @synthesize managedObjectContext = __managedObjectContext;
 @synthesize managedObjectModel = __managedObjectModel;
 @synthesize persistentStoreCoordinator = __persistentStoreCoordinator;
-@synthesize lastRefresh = _lastRefresh;
+@synthesize lastRefreshDateString = _lastRefreshDateString;
+@synthesize lastRefreshDate = _lastRefreshDate;
 @synthesize tweets = _tweets;
 @synthesize getTweetsData = _getTweetsData;
 @synthesize sendTweetsData = _sendTweetsData;
@@ -29,6 +30,53 @@
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
     
+    // Load persistant store
+    NSManagedObjectContext *context = self.managedObjectContext;
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Tweet" inManagedObjectContext:context];
+    [request setEntity:entity];
+    
+    NSError *error;
+    NSArray *results = [context executeFetchRequest:request error:&error];
+    if (results == nil) {
+        NSLog(@"fetch error: %@ (%@)", error, [error userInfo]);
+        abort();
+    }
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];                
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    [dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"PST"]];
+    self.lastRefreshDateString = @"1970-01-01 00:00:00"; // Unix Epoch
+    self.lastRefreshDate = [dateFormatter dateFromString:self.lastRefreshDateString];
+    if ([results count] > 0) {     
+        self.tweets = [results mutableCopy]; 
+        
+        /* Iterate through results and update refresh date */
+        for (Tweet *t in self.tweets) {
+            NSDate *newDate = [dateFormatter dateFromString:t.tstamp];
+            if ([newDate compare:self.lastRefreshDate] == (NSComparisonResult)NSOrderedDescending) {
+                NSLog(@"Updating %@ to %@", self.lastRefreshDate, newDate);
+                self.lastRefreshDate = [newDate laterDate:self.lastRefreshDate];
+                self.lastRefreshDateString = [dateFormatter stringFromDate:self.lastRefreshDate];
+            } 
+        }
+        // Sort the tweet array
+        [self.tweets sortUsingComparator:^(id a, id b) {
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];                
+            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+            [dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"PST"]];
+            NSDate *first = [dateFormatter dateFromString:[a valueForKey:@"tstamp"]];
+            NSDate *second = [dateFormatter dateFromString:[b valueForKey:@"tstamp"]];
+            
+            return [second compare:first];
+        }];
+        
+    } else {
+
+        self.tweets = [[NSMutableArray alloc] init];
+        
+    }
+        
     TweetsTableViewController *viewController = [[TweetsTableViewController alloc] initWithNibName:nil bundle:nil];
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:viewController];
     self.window.rootViewController = navController;
@@ -95,8 +143,35 @@
 
 #pragma mark - Connection Callbacks
 
-- (void)refreshTweetsWithURL:(NSURL *)url {
-    NSLog(@"refreshTweetsWithURL:%@", url);
+static NSString *makeSafeForURLArgument(NSString *str) {
+    NSMutableString *temp = [str mutableCopy];
+    [temp replaceOccurrencesOfString:@"?"
+                          withString:@"%3F"
+                             options:0
+                               range:NSMakeRange(0, [temp length])];
+    [temp replaceOccurrencesOfString:@"="
+                          withString:@"%3D"
+                             options:0
+                               range:NSMakeRange(0, [temp length])];
+    [temp replaceOccurrencesOfString:@"&"
+                          withString:@"%26"
+                             options:0
+                               range:NSMakeRange(0, [temp length])];
+    return temp;
+}
+
+- (void)refreshTweets {
+    NSLog(@"refreshTweets");
+    // Start Activity indicator
+    UIApplication *app = [UIApplication sharedApplication];
+    app.networkActivityIndicatorVisible = YES;
+    
+    // Format refresh string
+    static NSString *getTweetCGI = @"http://ezekiel.vancouver.wsu.edu/~cs458/cgi-bin/get-tweets.cgi";
+    NSString *encodedDateString = [self.lastRefreshDateString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *query = [NSString stringWithFormat:@"%@?date=%@", getTweetCGI, encodedDateString];
+    NSURL *url = [NSURL URLWithString:query];
+
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60.0];
     self.getTweetsConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
     
@@ -104,6 +179,33 @@
         self.getTweetsData = [[NSMutableData alloc] init]; 
     } else {
         NSLog(@"Error in refreshTweetsWithURL:%@", url);
+    }
+}
+
+- (void)sendTweetWithHandle:(NSString*)handle WsuId:(NSString*)wsuid Tweet:(NSString*)tweet {
+    NSLog(@"sendTweetWithHandle:%@ WsuId:%@ Tweet:%@", handle, wsuid, tweet);
+    
+    // Start Activity indicator
+    UIApplication *app = [UIApplication sharedApplication];
+    app.networkActivityIndicatorVisible = YES;
+    
+    // Format send string
+    static NSString *tweetSendCGI = @"http://ezekiel.vancouver.wsu.edu/~cs458/cgi-bin/add-tweet.cgi";
+    NSString *encodedTweet = [tweet stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *urlEncodedTweet = makeSafeForURLArgument(encodedTweet);
+    NSString *encodedHandle = [handle stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *urlEncodedHandle = makeSafeForURLArgument(encodedHandle);
+    NSString *encdedWSUID = [wsuid stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *query = [NSString stringWithFormat:@"%@?handle=%@&wsuid=%@&tweet=%@", tweetSendCGI, urlEncodedHandle, encdedWSUID, urlEncodedTweet];
+    NSURL *url = [NSURL URLWithString:query];
+
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60.0];
+    self.sendTweetsConnection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+    
+    if (self.sendTweetsConnection) {
+        self.sendTweetsData = [[NSMutableData alloc] init];
+    } else {
+        NSLog(@"Error in sendTweetWithURL:%@", url);
     }
 }
 
@@ -141,50 +243,90 @@
     if (connection == self.getTweetsConnection) {
         NSError *error;
         NSArray *newTweets = [NSPropertyListSerialization propertyListWithData:self.getTweetsData options:NSPropertyListMutableContainersAndLeaves format:NULL error:&error];
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];                
+        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+        [dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"PST"]];
         
-        if ([newTweets count] > 0) {   
-            NSArray *sortedArray;
-            sortedArray = [newTweets sortedArrayUsingComparator:^(id a, id b) {
-                NSString *first = [(Tweet *)a tstamp];
-                NSString *second = [(Tweet *)b tstamp];
-                return [first compare:second];
-            }];
-            
+        if ([newTweets count] > 0) {          
             // Convert from array of dictionaries to array of Tweets
             // Add to persistant store
             for (NSDictionary *dict in newTweets) {
-                Tweet *newTweet = [NSEntityDescription insertNewObjectForEntityForName:@"Tweet" inManagedObjectContext:self.managedObjectContext];
-                [newTweet setValue:[dict objectForKey:@"tweetid"] forKey:@"tweetid"];
-                [newTweet setValue:[dict objectForKey:@"wsuid"] forKey:@"wsuid"];
-                [newTweet setValue:[dict objectForKey:@"handle"] forKey:@"handle"];
-                [newTweet setValue:[dict objectForKey:@"isdeleted"] forKey:@"isdeleted"];
-                [newTweet setValue:[dict objectForKey:@"tstamp"] forKey:@"tstamp"];
-                [newTweet setValue:[dict objectForKey:@"tweet"] forKey:@"tweet"];
+                /* Check if persistant store has tweet already */
+                NSFetchRequest *request = [[NSFetchRequest alloc] init];
+                NSEntityDescription *entity = [NSEntityDescription entityForName:@"Tweet" inManagedObjectContext:self.managedObjectContext];
+                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(tweetid = %d)", [dict objectForKey:@"tweetid"]]; 
+                [request setEntity:entity];
+                [request setPredicate:predicate];
                 
-                /* XXX
-                [newTweet setTweetid:[dict objectForKey:@"tweetid"]];
-                [newTweet setWsuid:[dict objectForKey:@"wsuid"]];
-                [newTweet setHandle:[dict objectForKey:@"handle"]];
-                [newTweet setIsdeleted:[dict objectForKey:@"isdeleted"]];
-                [newTweet setTstamp:[dict objectForKey:@"tstamp"]];
-                [newTweet setTweet:[dict objectForKey:@"tweet"]];
-                */
+                NSArray *objects = [self.managedObjectContext executeFetchRequest:request error:&error];
                 
-                if ([[newTweet isdeleted] intValue] == 0) { // Add tweet to store
-                    [self.managedObjectContext insertObject:newTweet];
-                    [self.tweets addObject:newTweet];
+                if (nil == objects) {
+                    NSLog(@"There was an error in connectionDidFinishLoading:%@", error);
+                    abort();
                 }
                 
+                
+                if ([objects count] > 0) {
+                    NSLog(@"Tweet %@ already in persistant store", [dict objectForKey:@"tweetid"]);
+                } else { /* Add Tweet if not in persistant store */
+                    if ([[dict objectForKey:@"isdeleted"] intValue] != 0) {
+                        NSLog(@"Tweet is in deleted state");
+                    } else { // Add tweet to store
+                        Tweet *newTweet = [NSEntityDescription insertNewObjectForEntityForName:@"Tweet" inManagedObjectContext:self.managedObjectContext];
+                        [newTweet setValue:[dict objectForKey:@"tweetid"] forKey:@"tweetid"];
+                        [newTweet setValue:[dict objectForKey:@"wsuid"] forKey:@"wsuid"];
+                        [newTweet setValue:[dict objectForKey:@"handle"] forKey:@"handle"];
+                        [newTweet setValue:[dict objectForKey:@"isdeleted"] forKey:@"isdeleted"];
+                        [newTweet setValue:[dict objectForKey:@"tstamp"] forKey:@"tstamp"];
+                        [newTweet setValue:[dict objectForKey:@"tweet"] forKey:@"tweet"];
+                        
+                        //NSLog(@"Adding Tweet %@ to persistant store", newTweet);
+                        NSDate *newDate = [dateFormatter dateFromString:[newTweet tstamp]];
+                        if ([newDate laterDate:self.lastRefreshDate]) {
+                            self.lastRefreshDateString = [newTweet tstamp];
+                            self.lastRefreshDate = [dateFormatter dateFromString:self.lastRefreshDateString];
+                        }
+                        [self.tweets addObject:newTweet]; // Add to the view array    
+                    }
+                }
+                
+                // Sort the tweets
+                [self.tweets sortUsingComparator:^(id a, id b) {
+                    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];                
+                    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+                    [dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"PST"]];
+                    NSDate *first = [dateFormatter dateFromString:[a valueForKey:@"tstamp"]];
+                    NSDate *second = [dateFormatter dateFromString:[b valueForKey:@"tstamp"]];
+                    
+                    return [second compare:first];
+                }];
+                
                 /* Post notification  of new tweets */
-                //NSLog(@"newTweet:%@ sizeTweets:%i", newTweet, [self.tweets count]);
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"tweetsFinishedLoading" object:nil];
                 
             }
             [self.managedObjectContext save:&error];
         }
         self.getTweetsData = nil;
     } else if (connection == self.sendTweetsConnection) {
-        NSLog(@"sendTweetsConnection");
+        NSError *error;
+        NSArray *sendResults = [NSPropertyListSerialization propertyListWithData:self.sendTweetsData options:NSPropertyListMutableContainersAndLeaves format:NULL error:&error];
+        if ([[sendResults valueForKey:@"success"] intValue] == 0) {
+            NSLog(@"Failure: %@", [sendResults valueForKey:@"info"]);
+            NSString *errorMessage = [NSString stringWithFormat:@"An error occurred sending tweet: %@", [sendResults valueForKey:@"info"]];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ERROR" 
+                                                            message:errorMessage
+                                                           delegate:self 
+                                                  cancelButtonTitle:@"Okay" 
+                                                  otherButtonTitles:nil];
+            [alert setTag:1];
+            [alert show];
+        }
+        [self refreshTweets];
     }
+    // Turn off activity indicator
+    UIApplication *app = [UIApplication sharedApplication];
+    app.networkActivityIndicatorVisible = NO;
 }
 
 #pragma mark - Core Data stack
@@ -267,7 +409,7 @@
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
     }    
-    
+    //[[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil];
     return __persistentStoreCoordinator;
 }
 
