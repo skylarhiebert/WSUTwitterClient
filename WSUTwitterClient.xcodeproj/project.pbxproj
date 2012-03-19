@@ -18,13 +18,16 @@
 		140A91BD150FD60900BCF0B0 /* TweetsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 140A91BB150FD60900BCF0B0 /* TweetsTableViewController.m */; };
 		140A91BE150FD60900BCF0B0 /* TweetsTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 140A91BC150FD60900BCF0B0 /* TweetsTableViewController.xib */; };
 		140A91C1150FD6F200BCF0B0 /* Tweet.m in Sources */ = {isa = PBXBuildFile; fileRef = 140A91C0150FD6F200BCF0B0 /* Tweet.m */; };
+		145D80981517950C004F193E /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 145D80971517950C004F193E /* User.m */; };
+		145D80AB1517ACC8004F193E /* twitter_57x57.png in Resources */ = {isa = PBXBuildFile; fileRef = 145D80AA1517ACC8004F193E /* twitter_57x57.png */; };
+		145D80AD1517ACCB004F193E /* twitter_114x114.png in Resources */ = {isa = PBXBuildFile; fileRef = 145D80AC1517ACCB004F193E /* twitter_114x114.png */; };
 		14BD31A2151262FF001E09C9 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14BD31A1151262FF001E09C9 /* QuartzCore.framework */; };
 		14E9070015113E4800EFF787 /* TweetEditorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 14E906FE15113E4800EFF787 /* TweetEditorViewController.m */; };
 		14E9070115113E4800EFF787 /* TweetEditorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 14E906FF15113E4800EFF787 /* TweetEditorViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		140A919A150FD58C00BCF0B0 /* WSUTwitterClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WSUTwitterClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		140A919A150FD58C00BCF0B0 /* WSUTwitter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WSUTwitter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		140A919E150FD58C00BCF0B0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		140A91A0150FD58C00BCF0B0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		140A91A2150FD58C00BCF0B0 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -41,6 +44,10 @@
 		140A91BC150FD60900BCF0B0 /* TweetsTableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TweetsTableViewController.xib; sourceTree = "<group>"; };
 		140A91BF150FD6F200BCF0B0 /* Tweet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tweet.h; sourceTree = "<group>"; };
 		140A91C0150FD6F200BCF0B0 /* Tweet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tweet.m; sourceTree = "<group>"; };
+		145D80961517950C004F193E /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		145D80971517950C004F193E /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		145D80AA1517ACC8004F193E /* twitter_57x57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = twitter_57x57.png; sourceTree = "<group>"; };
+		145D80AC1517ACCB004F193E /* twitter_114x114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = twitter_114x114.png; sourceTree = "<group>"; };
 		14BD31A1151262FF001E09C9 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		14E906FD15113E4800EFF787 /* TweetEditorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TweetEditorViewController.h; sourceTree = "<group>"; };
 		14E906FE15113E4800EFF787 /* TweetEditorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TweetEditorViewController.m; sourceTree = "<group>"; };
@@ -66,6 +73,8 @@
 		140A918F150FD58C00BCF0B0 = {
 			isa = PBXGroup;
 			children = (
+				145D80AC1517ACCB004F193E /* twitter_114x114.png */,
+				145D80AA1517ACC8004F193E /* twitter_57x57.png */,
 				14BD31A1151262FF001E09C9 /* QuartzCore.framework */,
 				140A91A6150FD58C00BCF0B0 /* WSUTwitterClient */,
 				140A919D150FD58C00BCF0B0 /* Frameworks */,
@@ -76,7 +85,7 @@
 		140A919B150FD58C00BCF0B0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				140A919A150FD58C00BCF0B0 /* WSUTwitterClient.app */,
+				140A919A150FD58C00BCF0B0 /* WSUTwitter.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -104,6 +113,8 @@
 				14E906FE15113E4800EFF787 /* TweetEditorViewController.m */,
 				14E906FF15113E4800EFF787 /* TweetEditorViewController.xib */,
 				140A91B2150FD58C00BCF0B0 /* WSUTwitterClient.xcdatamodeld */,
+				145D80961517950C004F193E /* User.h */,
+				145D80971517950C004F193E /* User.m */,
 				140A91BF150FD6F200BCF0B0 /* Tweet.h */,
 				140A91C0150FD6F200BCF0B0 /* Tweet.m */,
 				140A91A7150FD58C00BCF0B0 /* Supporting Files */,
@@ -139,7 +150,7 @@
 			);
 			name = WSUTwitterClient;
 			productName = WSUTwitterClient;
-			productReference = 140A919A150FD58C00BCF0B0 /* WSUTwitterClient.app */;
+			productReference = 140A919A150FD58C00BCF0B0 /* WSUTwitter.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -176,6 +187,8 @@
 				140A91AB150FD58C00BCF0B0 /* InfoPlist.strings in Resources */,
 				140A91BE150FD60900BCF0B0 /* TweetsTableViewController.xib in Resources */,
 				14E9070115113E4800EFF787 /* TweetEditorViewController.xib in Resources */,
+				145D80AB1517ACC8004F193E /* twitter_57x57.png in Resources */,
+				145D80AD1517ACCB004F193E /* twitter_114x114.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -192,6 +205,7 @@
 				140A91BD150FD60900BCF0B0 /* TweetsTableViewController.m in Sources */,
 				140A91C1150FD6F200BCF0B0 /* Tweet.m in Sources */,
 				14E9070015113E4800EFF787 /* TweetEditorViewController.m in Sources */,
+				145D80981517950C004F193E /* User.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,7 +274,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WSUTwitterClient/WSUTwitterClient-Prefix.pch";
 				INFOPLIST_FILE = "WSUTwitterClient/WSUTwitterClient-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = WSUTwitter;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -271,7 +285,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WSUTwitterClient/WSUTwitterClient-Prefix.pch";
 				INFOPLIST_FILE = "WSUTwitterClient/WSUTwitterClient-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = WSUTwitter;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

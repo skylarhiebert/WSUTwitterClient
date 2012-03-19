@@ -144,6 +144,13 @@
 #pragma mark - Connection Callbacks
 
 static NSString *makeSafeForURLArgument(NSString *str) {
+    CFStringRef cfStr = (__bridge_retained CFStringRef)str;
+    CFStringRef chars = CFSTR("!*'();:@+$,/?%#[]");
+    CFStringRef preppedString = CFURLCreateStringByAddingPercentEscapes(NULL, cfStr, NULL,  chars, kCFStringEncodingUTF8);
+    NSLog(@"Encoded String:%@", preppedString);
+    return (__bridge_transfer NSString *)preppedString;
+    
+    /* XXX
     NSMutableString *temp = [str mutableCopy];
     [temp replaceOccurrencesOfString:@"?"
                           withString:@"%3F"
@@ -158,6 +165,7 @@ static NSString *makeSafeForURLArgument(NSString *str) {
                              options:0
                                range:NSMakeRange(0, [temp length])];
     return temp;
+     */
 }
 
 - (void)refreshTweets {
@@ -191,10 +199,8 @@ static NSString *makeSafeForURLArgument(NSString *str) {
     
     // Format send string
     static NSString *tweetSendCGI = @"http://ezekiel.vancouver.wsu.edu/~cs458/cgi-bin/add-tweet.cgi";
-    NSString *encodedTweet = [tweet stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSString *urlEncodedTweet = makeSafeForURLArgument(encodedTweet);
-    NSString *encodedHandle = [handle stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSString *urlEncodedHandle = makeSafeForURLArgument(encodedHandle);
+    NSString *urlEncodedTweet = makeSafeForURLArgument(tweet);
+    NSString *urlEncodedHandle = makeSafeForURLArgument(handle);
     NSString *encdedWSUID = [wsuid stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSString *query = [NSString stringWithFormat:@"%@?handle=%@&wsuid=%@&tweet=%@", tweetSendCGI, urlEncodedHandle, encdedWSUID, urlEncodedTweet];
     NSURL *url = [NSURL URLWithString:query];
@@ -407,6 +413,7 @@ static NSString *makeSafeForURLArgument(NSString *str) {
          
          */
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        //[[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil];
         abort();
     }    
     //[[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil];

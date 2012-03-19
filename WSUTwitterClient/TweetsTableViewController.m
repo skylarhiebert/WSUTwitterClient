@@ -100,23 +100,7 @@
     [appDelegate refreshTweets];
 }
 
-static NSString *makeSafeForURLArgument(NSString *str) {
-    NSMutableString *temp = [str mutableCopy];
-    [temp replaceOccurrencesOfString:@"?"
-                          withString:@"%3F"
-                             options:0
-                               range:NSMakeRange(0, [temp length])];
-    [temp replaceOccurrencesOfString:@"="
-                          withString:@"%3D"
-                             options:0
-                               range:NSMakeRange(0, [temp length])];
-    [temp replaceOccurrencesOfString:@"&"
-                          withString:@"%26"
-                             options:0
-                               range:NSMakeRange(0, [temp length])];
-     return temp;
-}
-     
+   
 -(void)addTweetWithHandle:(NSString*)handle WsuId:(NSString*)wsuid Tweet:(NSString*)tweet {
     WSUTwitterClientAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     NSLog(@"Adding Tweet");

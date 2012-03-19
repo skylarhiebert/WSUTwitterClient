@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+@class User;
+
 @protocol EditTweetDelegate <NSObject>
 
 -(void)addTweetWithHandle:(NSString*)handle WsuId:(NSString*)wsuid Tweet:(NSString*)tweet;
@@ -22,6 +24,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *wsuidTextField;
 @property (weak, nonatomic) IBOutlet UITextView *tweetTextView;
 @property (weak, nonatomic) IBOutlet UILabel *charactersLeftTextField;
+@property (strong, nonatomic) User *activeUser;
 
 - (IBAction)editingDidEnd:(id)sender;
 
